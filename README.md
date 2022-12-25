@@ -16,5 +16,5 @@ Required:
 ## Usage
 
 ```sh
-run main.go
+go run main.go
 ```
