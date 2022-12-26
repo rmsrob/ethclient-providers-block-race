@@ -78,7 +78,7 @@ func runRace(wsProviders []string, blockCount int) (best string, err error) {
 				case header := <-blocksChan:
 					hash := header.Hash().Hex()
 					shorterHash := hash[:4] + "..." + hash[len(hash)-5:]
-					fmt.Printf("Received block with hash %s from url %s\n", shorterHash, url[:31]+"...")
+					fmt.Printf("Received block with hash %s from url %s\n", shorterHash, url)
 					count++
 					if count >= blockCount {
 						elapsed := time.Since(start)
@@ -103,9 +103,9 @@ func runRace(wsProviders []string, blockCount int) (best string, err error) {
 	for i, r := range runnersStats {
 		if i != 0 {
 			from := runnersStats[0].laps - r.laps
-			fmt.Printf("#%d > %s with %f seconds >> %f\n", i+1, r.url[:31]+"...", r.laps.Seconds(), from.Seconds())
+			fmt.Printf("#%d > %s with %f seconds >> %f\n", i+1, r.url, r.laps.Seconds(), from.Seconds())
 		} else {
-			fmt.Printf("#%d > %s with %f seconds >> 0\n", i+1, r.url[:31]+"...", r.laps.Seconds())
+			fmt.Printf("#%d > %s with %f seconds >> 0\n", i+1, r.url, r.laps.Seconds())
 		}
 	}
 
