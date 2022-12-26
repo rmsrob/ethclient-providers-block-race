@@ -17,6 +17,11 @@ type Runner struct {
 }
 
 func New(wsProviders []string, blockCount int) (best string, err error) {
+	best, err = runRace(wsProviders, blockCount)
+	return best, err
+}
+
+func runRace(wsProviders []string, blockCount int) (best string, err error) {
 	var (
 		runnersStats []Runner
 		ln = len(wsProviders)

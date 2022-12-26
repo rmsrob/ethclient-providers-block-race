@@ -1,9 +1,10 @@
 package main
 
 import (
-	"ethclientProvidersBlockRace"
 	"fmt"
 	"log"
+
+	race "github.com/rrobrms/ethclient-providers-block-race"
 )
 
 
@@ -17,7 +18,7 @@ func main() {
 		}
 	)
 
-	best, err := ethclientProvidersBlockRace.New(wsProviders, blockCount)
+	best, err := race.New(wsProviders, blockCount)
 	if err != nil {
 		log.Fatalln(err)
 	}

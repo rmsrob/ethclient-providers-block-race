@@ -20,6 +20,8 @@ go get github.com/rrobrms/ethclient-providers-block-race.go
 ```
 
 ```go
+import race "github.com/rrobrms/ethclient-providers-block-race"
+
 func MyFunc() {
 	var (
 		blockCount = 23
@@ -30,7 +32,7 @@ func MyFunc() {
 		}
 	)
 
-	best, err := ethClientRace(wsProviders, blockCount)
+	best, err := race.New(wsProviders, blockCount)
 	if err != nil {
 		log.Fatalln(err)
 	}
