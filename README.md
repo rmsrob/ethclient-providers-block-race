@@ -6,7 +6,7 @@
 
 > Test your Ethclient Providers with a race to discover x blocks
 
-![race](https://user-images.githubusercontent.com/93430216/209470965-7f8fe9d1-dcbe-4409-b477-6f406bc04554.gif)
+![race](https://user-images.githubusercontent.com/93430216/209518983-7b9e1efd-b623-4b5c-b661-9372c272587a.gif)
 
 
 ## Prerequisite
@@ -16,5 +16,24 @@ Required:
 ## Usage
 
 ```sh
-go run main.go
+go get github.com/rrobrms/ethclient-providers-block-race.go
+```
+
+```go
+func MyFunc() {
+	var (
+		blockCount = 23
+		wsProviders = []string{
+			"wss://eth-mainnet.g.alchemy.com/v2/ALCHEMY_API_KEY",
+			"wss://mainnet.infura.io/ws/v3/INFURA_API_KEY",
+			"wss://rpc.ankr.com/eth",
+		}
+	)
+
+	best, err := ethClientRace(wsProviders, blockCount)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Printf("\nyou should use this provider: %s\n", best)
+}
 ```

@@ -1,8 +1,9 @@
-package main
+package ethclientProvidersBlockRace
 
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"sync"
 	"time"
 
@@ -15,17 +16,31 @@ type Runner struct {
 	laps 	time.Duration
 }
 
-func main() {
-	var runnersStats []Runner
+func New(wsProviders []string, blockCount int) (best string, err error) {
+	var (
+		runnersStats []Runner
+		ln = len(wsProviders)
+	)
 
-	// Change here the full websocket providers url you want to enter into the race
-	wsProviders := [3]string{
-		"wss://eth-mainnet.g.alchemy.com/v2/YOUR-ALCHEMY-KEY",
-		"wss://mainnet.infura.io/ws/v3/YOUR-INFURA-KEY",
-		"wss://rpc.ankr.com/eth",
+	switch {
+	case blockCount < 1:
+		err = fmt.Errorf("to start the race we need at least to run for 1 block")
+		return "", err
+	case ln <= 1:
+		err = fmt.Errorf("to start the race we need at least 2 runners")
+		return "", err
+	case ln >= 2:
+		for _, url := range wsProviders {
+			re := regexp.MustCompile(`^(ws|wss):\/\/.*`)
+			if !re.MatchString(url) {
+				err = fmt.Errorf("url must be a websocket standard")
+				return "", err
+			}
+		}
+		fallthrough
+	case ln >= 1 && blockCount >= 1:
+		fmt.Printf("*** The race can beggin with %d runners over %d blocks ***\n", ln, blockCount)
 	}
-	// Enter the numbers of blocks the race should last
-	blockCount 	:= 3
 
 	fmt.Printf("\n---WSS PROVIDERS RUN A SHORT %v BLOCKS RACE---\n", blockCount)
 	var wg sync.WaitGroup
@@ -69,6 +84,7 @@ func main() {
 						})
 						return
 					}
+				// Disqualification rule if the provider stale for 48sec is out of the race
 				case <-time.After(time.Second*48):
 					fmt.Printf("Timed out for url %s\n", url)
 					return
@@ -81,10 +97,12 @@ func main() {
 	fmt.Printf("\n===WSS PROVIDERS PODIUM FOR RUNNING %d BLOCKS===\n", blockCount)
 	for i, r := range runnersStats {
 		if i != 0 {
-			from := runnersStats[i-1].laps - r.laps
+			from := runnersStats[0].laps - r.laps
 			fmt.Printf("#%d > %s with %f seconds >> %f\n", i+1, r.url[:31]+"...", r.laps.Seconds(), from.Seconds())
 		} else {
 			fmt.Printf("#%d > %s with %f seconds >> 0\n", i+1, r.url[:31]+"...", r.laps.Seconds())
 		}
 	}
+
+	return runnersStats[0].url, err
 }
